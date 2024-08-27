@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Document</title>
+</head>
+<body onload="init()">
+<canvas id='myCanvas' width="400" height="400"></canvas>
+
+<script>
+    var canvas = document.getElementById('myCanvas');
+    var graphics = canvas.getContext('2d');
+
+    const centreX = canvas.width / 2;
+    const centreY = canvas.height / 2;
+
+    const sunR = 30;
+    const orbitR = 150;
+    const planR = 10;
+    let angle = 0;
+
+    function drawSun(){
+        graphics.beginPath();
+        graphics.arc(centreX, centreY, sunR, 0, 2*Math.PI)
+        graphics.fillStyle = 'yellow';
+        graphics.fill();
+    }
+
+    function drawPlanet(){
+        const x = centreX + Math.cos(angle) * orbitR;
+        const y = centreY + Math.sin(angle) * orbitR;
+
+        graphics.beginPath();
+        graphics.arc(x,y, planR, 0, 2*Math.PI);
+        graphics.fillStyle = 'blue';
+        graphics.fill();
+    }
+
+    function drawOrbitPath(){
+            graphics.beginPath();
+            graphics.arc(centreX, centreY, orbitR, 0, 2 * Math.PI);
+            graphics.strokeStyle = 'black';
+            graphics.stroke();
+        }
+
+    function init(){
+        canvas = document.getElementById('myCanvas');
+        graphics = canvas.getContext('2d');
+
+        graphics.fillStyle = 'white';
+        graphics.fillRect(0,0, canvas.width, canvas.height);
+
+        drawSun();
+        drawOrbitPath();
+        drawPlanet();
+
+        angle += 0.02;
+        setInterval(function(){
+            graphics.clearRect(0,0,canvas.width,canvas.height);
+            drawOrbitPath();
+            drawSun();
+            angle += 0.01;
+            drawPlanet();
+        }, 1000/60);
+    }
+</script>
+</body>
+</html>

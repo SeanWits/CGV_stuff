@@ -1,0 +1,153 @@
+<html>
+
+<head>
+    <title>Exercise_1_2438634</title>
+    <script>
+        var canvas;
+        var graphics;
+        var centerX, centerY, radius;
+
+        function line(x1, y1, x2, y2) {
+            graphics.beginPath();
+            graphics.moveTo(x1, y1);
+            graphics.lineTo(x2, y2);
+            graphics.stroke();
+        }
+
+        function drawClockFace() {
+            drawCloudBackground();
+
+            const segments = 60;
+            for (let i = 0; i < segments; i++) {
+                let angle1 = i * 2 * Math.PI / segments;
+                let angle2 = (i + 1) * 2 * Math.PI / segments;
+                let x1 = centerX + radius * Math.cos(angle1);
+                let y1 = centerY + radius * Math.sin(angle1);
+                let x2 = centerX + radius * Math.cos(angle2);
+                let y2 = centerY + radius * Math.sin(angle2);
+                line(x1, y1, x2, y2);
+            }
+
+            for (let i = 0; i < 60; i++) {
+                let angle = i * Math.PI / 30;
+                let x1 = centerX + (radius - 10) * Math.cos(angle);
+                let y1 = centerY + (radius - 10) * Math.sin(angle);
+                let x2 = centerX + radius * Math.cos(angle);
+                let y2 = centerY + radius * Math.sin(angle);
+
+                if (i % 5 === 0) {
+                    graphics.lineWidth = 3;
+                    let x3 = centerX + (radius - 20) * Math.cos(angle);
+                    let y3 = centerY + (radius - 20) * Math.sin(angle);
+                    line(x3, y3, x2, y2);
+                } else {
+                    graphics.lineWidth = 1;
+                    line(x1, y1, x2, y2);
+                }
+            }
+
+            function drawCloud(x, y, size) {
+                graphics.beginPath();
+                graphics.arc(x, y, size, Math.PI * 0.5, Math.PI * 1.5);
+                graphics.arc(x + size, y - size / 2, size * 0.6, Math.PI * 1, Math.PI * 2);
+                graphics.arc(x + size * 1.5, y, size * 0.8, Math.PI * 1.2, Math.PI * 2);
+                graphics.arc(x + size * 2, y + size / 2, size * 0.6, Math.PI * 1.5, Math.PI * 0.5);
+                graphics.closePath();
+                graphics.fillStyle = "rgba(255, 255, 255, 0.7)";
+                graphics.fill();
+            }
+
+            function drawCloudBackground() {
+                graphics.save();
+                graphics.beginPath();
+                graphics.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                graphics.clip();
+
+                graphics.fillStyle = "#87CEEB";
+                graphics.fillRect(centerX - radius, centerY - radius, radius * 2, radius * 2);
+
+                //clouds
+                drawCloud(centerX - radius * 0.8, centerY - radius * 0.5, radius * 0.2);
+                drawCloud(centerX + radius * 0.3, centerY - radius * 0.7, radius * 0.15);
+                drawCloud(centerX - radius * 0.2, centerY + radius * 0.6, radius * 0.25);
+                drawCloud(centerX + radius * 0.7, centerY + radius * 0.2, radius * 0.18);
+
+                graphics.restore();
+            }
+
+            //numbers
+            graphics.font = "20px Arial";
+            graphics.textAlign = "center";
+            graphics.textBaseline = "middle";
+            for (let i = 1; i <= 12; i++) {
+                let angle = (i - 3) * Math.PI / 6;
+                let x = centerX + (radius - 35) * Math.cos(angle);
+                let y = centerY + (radius - 35) * Math.sin(angle);
+                graphics.fillText(i.toString(), x, y);
+            }
+
+        }
+
+        function drawHands() {
+            let now = new Date();
+            let hours = (now.getUTCHours() + 2) % 24;
+            let minutes = now.getUTCMinutes();
+            let seconds = now.getUTCSeconds();
+
+            //Hour
+            let hourAngle = ((hours % 12) + minutes / 60) * Math.PI / 6;
+            graphics.lineWidth = 4;
+            line(centerX, centerY, centerX + 0.5 * radius * Math.sin(hourAngle), centerY - 0.5 * radius * Math.cos(hourAngle));
+
+            //Minute
+            let minuteAngle = minutes * Math.PI / 30;
+            graphics.lineWidth = 2;
+            line(centerX, centerY, centerX + 0.8 * radius * Math.sin(minuteAngle), centerY - 0.8 * radius * Math.cos(minuteAngle));
+
+            //Second
+            let secondAngle = seconds * Math.PI / 30;
+            graphics.lineWidth = 1;
+            graphics.strokeStyle = "red";
+            line(centerX, centerY, centerX + 0.9 * radius * Math.sin(secondAngle), centerY - 0.9 * radius * Math.cos(secondAngle));
+            graphics.strokeStyle = "black";
+        }
+
+        function drawFrame() {
+            graphics.strokeStyle = "black";
+            graphics.lineWidth = 10;
+            graphics.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+        }
+
+        function updateTime() {
+            let now = new Date();
+            let saTime = new Date(now.getTime());
+            document.getElementById("time").innerHTML = saTime.toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' }) + ' (South Africa Standard Time)';
+        }
+
+        function init() {
+            canvas = document.getElementById("myCanvas");
+            graphics = canvas.getContext("2d");
+            centerX = canvas.width / 2;
+            centerY = canvas.height / 2;
+            radius = Math.min(centerX, centerY) - 10;
+
+            setInterval(function () {
+                graphics.clearRect(0, 0, canvas.width, canvas.height);
+                drawClockFace();
+                drawHands();
+                updateTime();
+                drawFrame();
+            }, 1000);
+        }
+    </script>
+</head>
+
+<body onload="init()">
+    <h1>Analog Clock (SAST)</h1>
+    <p id="time"></p>
+    <canvas id="myCanvas" width="600" height="600" style="border:1px solid #d3d3d3;">
+        Your browser does not support the HTML5 canvas tag.
+    </canvas>
+</body>
+
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise_2_2438634</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="600" height="600"></canvas>
+
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const graphics = canvas.getContext('2d');
+        const pixelSize = 1;
+
+        function draw() {
+            graphics.fillStyle = 'white';
+            graphics.fillRect(0, 0, canvas.width, canvas.height);
+
+            graphics.strokeStyle = 'black';
+            graphics.lineWidth = pixelSize;
+            graphics.strokeLine(0, 300, 600, 300);
+            graphics.strokeLine(300, 0, 300, 600);
+
+            drawStripes();
+            drawFlag();
+            drawColorfulOvals();
+            drawHeart();
+        }
+
+        function drawStripes() {
+            graphics.fillStyle = 'orange';
+            for (let i = 0; i < 15; i++) {
+                graphics.fillRect(0, i * 20, 300, 10);
+            }
+        }
+
+        function drawFlag() {
+            graphics.fillStyle = 'blue';
+            graphics.fillRect(350, 50, 200, 200);
+            graphics.fillStyle = 'white';
+            graphics.beginPath();
+            graphics.moveTo(350, 250);
+            graphics.lineTo(450, 150);
+            graphics.lineTo(550, 250);
+            graphics.fill();
+        }
+
+        function drawColorfulOvals() {
+            const colors = ['red', 'yellow', 'lime', 'cyan', 'magenta'];
+            for (let i = 0; i < 5; i++) {
+                graphics.fillStyle = colors[i];
+                graphics.fillOval(150, 450 - i * 30, 120 - i * 20, 20);
+                graphics.strokeStyle = 'black';
+                graphics.lineWidth = 2 * pixelSize;
+                graphics.strokeOval(150, 450 - i * 30, 120 - i * 20, 20);
+            }
+        }
+
+        function drawHeart() {
+            graphics.beginPath();
+            graphics.moveTo(450, 350);
+            graphics.bezierCurveTo(450, 280, 350, 280, 350, 350);
+            graphics.bezierCurveTo(350, 420, 450, 500, 450, 500);
+            graphics.bezierCurveTo(450, 500, 550, 420, 550, 350);
+            graphics.bezierCurveTo(550, 280, 450, 280, 450, 350);
+            graphics.fillStyle = 'red';
+            graphics.fill();
+            graphics.strokeStyle = 'black';
+            graphics.lineWidth = 3 * pixelSize;
+            graphics.stroke();
+        }
+
+        graphics.strokeLine = function(x1, y1, x2, y2) {
+            this.beginPath();
+            this.moveTo(x1, y1);
+            this.lineTo(x2, y2);
+            this.stroke();
+        };
+
+        graphics.fillOval = function(x, y, rx, ry) {
+            this.beginPath();
+            this.ellipse(x, y, rx, ry, 0, 0, 2 * Math.PI);
+            this.fill();
+        };
+
+        graphics.strokeOval = function(x, y, rx, ry) {
+            this.beginPath();
+            this.ellipse(x, y, rx, ry, 0, 0, 2 * Math.PI);
+            this.stroke();
+        };
+
+        draw();
+    </script>
+</body>
+</html>

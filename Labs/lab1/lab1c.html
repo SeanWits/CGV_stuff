@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercise_3_2438634</title>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="600" height="400"></canvas><br>
+    <select id="colorSelect">
+        <option value="black">Black</option>
+        <option value="red">Red</option>
+        <option value="blue">Blue</option>
+        <option value="green">Green</option>
+        <option value="purple">Purple</option>
+    </select>
+    <select id="toolSelect">
+        <option value="square">Square</option>
+        <option value="star">Star</option>
+        <option value="curve">Curve</option>
+        <option value="circle">Circle</option>
+        <option value="eraser">Eraser</option>
+    </select>
+    <button id="clearButton">Clear</button>
+
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let startX, startY, prevX, prevY;
+
+        function init() {
+            canvas.addEventListener('mousedown', doMouseDown);
+            canvas.addEventListener('mousemove', doMouseMove);
+            canvas.addEventListener('mouseup', doMouseUp);
+            document.getElementById('clearButton').onclick = doClear;
+        }
+
+        function doMouseDown(e) {
+            isDrawing = true;
+            [startX, startY] = [e.offsetX, e.offsetY];
+            [prevX, prevY] = [startX, startY];
+        }
+
+        function doMouseMove(e) {
+            if (!isDrawing) return;
+            const color = document.getElementById('colorSelect').value;
+            const tool = document.getElementById('toolSelect').value;
+            ctx.strokeStyle = color;
+            ctx.fillStyle = color;
+
+            const x = e.offsetX;
+            const y = e.offsetY;
+
+            switch (tool) {
+                case 'square':
+                    drawSquare(x, y);
+                    break;
+                case 'star':
+                    drawStar(x, y);
+                    break;
+                case 'curve':
+                    drawCurve(x, y);
+                    break;
+                case 'circle':
+                    drawCircle(x, y);
+                    break;
+                case 'eraser':
+                    erase(x, y);
+                    break;
+            }
+
+            [prevX, prevY] = [x, y];
+        }
+
+        function doMouseUp() {
+            isDrawing = false;
+        }
+
+        function drawSquare(x, y) {
+            ctx.fillRect(x - 20, y - 20, 40, 40);
+        }
+
+        function drawStar(x, y) {
+            ctx.beginPath();
+            for (let i = 0; i < 5; i++) {
+                ctx.lineTo(x + 20 * Math.cos(i * 4 * Math.PI / 5), 
+                           y + 20 * Math.sin(i * 4 * Math.PI / 5));
+                ctx.lineTo(x + 8 * Math.cos((i * 4 + 2) * Math.PI / 5), 
+                           y + 8 * Math.sin((i * 4 + 2) * Math.PI / 5));
+            }
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        function drawCurve(x, y) {
+            ctx.beginPath();
+            ctx.moveTo(prevX, prevY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+        }
+
+        function drawCircle(x, y) {
+            const radius = Math.sqrt((x - startX) ** 2 + (y - startY) ** 2);
+            ctx.beginPath();
+            ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
+            ctx.stroke();
+        }
+
+        function erase(x, y) {
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 20;
+            ctx.beginPath();
+            ctx.moveTo(prevX, prevY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            ctx.lineWidth = 1;
+        }
+
+        function doClear() {
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        init();
+    </script>
+</body>
+</html>
